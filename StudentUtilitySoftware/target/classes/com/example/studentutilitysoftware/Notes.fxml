@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="737.0" prefWidth="875.0" style="-fx-background-color: darkgrey;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.studentutilitysoftware.NotesFeature.NotesController">
+   <children>
+      <BorderPane prefHeight="81.0" prefWidth="883.0" style="-fx-background-color: #011a00;">
+         <left>
+            <ImageView fx:id="Login_ImageView" fitHeight="61.0" fitWidth="66.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+               <image>
+                  <Image url="@clipboard.png" />
+               </image>
+            </ImageView>
+         </left>
+         <center>
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="56.0" prefWidth="558.0" text="TAKE QUICK NOTES" textFill="WHITE" BorderPane.alignment="CENTER">
+               <font>
+                  <Font name="Dubai Medium" size="41.0" />
+               </font>
+            </Label>
+         </center>
+      </BorderPane>
+      <VBox layoutX="-3.0" layoutY="106.0" prefHeight="596.0" prefWidth="875.0">
+         <children>
+            <Label text="TITLE">
+               <font>
+                  <Font name="Dubai Medium" size="20.0" />
+               </font></Label>
+            <TextField style="-fx-background-radius: 20;" />
+            <Label text="CONTENT">
+               <font>
+                  <Font name="Dubai Medium" size="20.0" />
+               </font></Label>
+            <TextArea prefHeight="200.0" prefWidth="200.0" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button mnemonicParsing="false" style="-fx-background-color: #011a11; -fx-background-radius: 20;" text="SAVE NOTE" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets left="130.0" top="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Dubai Medium" size="18.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" style="-fx-background-color: #011a11; -fx-background-radius: 20;" text="EDIT NOTE" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets left="130.0" top="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Dubai Medium" size="18.0" />
+                     </font>
+                  </Button>
+                  <Button mnemonicParsing="false" style="-fx-background-color: #011a11; -fx-background-radius: 20;" text="REMOVE NOTE" textFill="WHITE">
+                     <HBox.margin>
+                        <Insets left="130.0" top="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="Dubai Medium" size="18.0" />
+                     </font>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets bottom="30.0" top="30.0" />
+               </VBox.margin>
+            </HBox>
+            <TableView editable="true" prefHeight="229.0" prefWidth="859.0" tableMenuButtonVisible="true">
+              <columns>
+                <TableColumn prefWidth="63.0" text="NOTE ID" />
+                <TableColumn prefWidth="247.0" text="TITLE" />
+                  <TableColumn prefWidth="544.0" text="DESCRIPTION" />
+              </columns>
+            </TableView>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

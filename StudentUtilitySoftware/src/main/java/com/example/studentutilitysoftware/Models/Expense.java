@@ -6,12 +6,11 @@ import java.sql.Date;
 
 public class Expense {
 
-    private IntegerProperty id;           // For database ID
-    private StringProperty title;         // Title as a StringProperty
-    private ObjectProperty<Date> date;    // Date as an ObjectProperty
-    private FloatProperty amount;         // Amount as a FloatProperty
+    private IntegerProperty id;
+    private StringProperty title;
+    private ObjectProperty<Date> date;
+    private FloatProperty amount;
 
-    // Default constructor
     public Expense() {
         this.id = new SimpleIntegerProperty();
         this.title = new SimpleStringProperty();
@@ -19,7 +18,6 @@ public class Expense {
         this.amount = new SimpleFloatProperty();
     }
 
-    // Parameterized constructor
     public Expense(int id, String title, Date date, float amount) {
         this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
@@ -76,7 +74,6 @@ public class Expense {
         return amount.get();
     }
 
-    // toString method for debugging
     @Override
     public String toString() {
         return "Expense{" +
@@ -86,4 +83,5 @@ public class Expense {
                 ", amount=" + amount.get() +
                 '}';
     }
+
 }

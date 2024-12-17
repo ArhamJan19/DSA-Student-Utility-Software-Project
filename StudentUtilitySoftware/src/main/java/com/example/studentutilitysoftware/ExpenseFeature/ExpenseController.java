@@ -2,9 +2,9 @@ package com.example.studentutilitysoftware.ExpenseFeature;
 
 import com.example.studentutilitysoftware.DataBase.DatabaseConnection;
 import com.example.studentutilitysoftware.Models.Expense;
-import com.example.studentutilitysoftware.Models.LinkedList;
-import com.example.studentutilitysoftware.Models.PriorityQueue;
-import com.example.studentutilitysoftware.Models.newExpenseStack;
+import com.example.studentutilitysoftware.Models.LinkedList.LinkedList;
+import com.example.studentutilitysoftware.Models.PriorityQueue.PriorityQueue;
+import com.example.studentutilitysoftware.Models.Stack.NewStack;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +17,6 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 public class ExpenseController {
 
@@ -76,15 +75,15 @@ public class ExpenseController {
     @FXML
     private Label TotalLabel;
 
-    private PriorityQueue expensesQueue; // Custom Priority Queue
-    private LinkedList newExpensesList;  // Custom Linked List
-    private newExpenseStack recentExpensesStack; // Custom Stack for recent expenses
+    private PriorityQueue<Expense> expensesQueue;
+    private LinkedList<Expense> newExpensesList;
+    private NewStack<Expense> recentExpensesStack;
     private float totalRecentExpenses = 0;
 
-    private void Initialze() {
-        expensesQueue = new PriorityQueue();
-        newExpensesList = new LinkedList();
-        recentExpensesStack = new newExpenseStack();
+    private void Initialize() {
+        expensesQueue = new PriorityQueue<>();
+        newExpensesList = new LinkedList<>();
+        recentExpensesStack = new NewStack<>();
 
         if (DateFrom.getValue() == null) DateFrom.setValue(LocalDate.now());
         if (DateTo.getValue() == null) DateTo.setValue(LocalDate.now());
@@ -178,10 +177,10 @@ public class ExpenseController {
         }
 
         Date sqlDate = Date.valueOf(date);
-        Expense newExpense = new Expense(0, title, sqlDate, amount); // ID 0 for new expenses
+        Expense newExpense = new Expense(0, title, sqlDate, amount);
 
-        newExpensesList.addExpense(newExpense);
-        recentExpensesStack.pushExpense(newExpense);
+        newExpensesList.insert(newExpense);
+        recentExpensesStack.pushItem(newExpense);
 
         updateRecentExpenseTable();
 
@@ -191,17 +190,39 @@ public class ExpenseController {
     }
 
     private void updateRecentExpenseTable() {
-        Stack<Expense> recentExpensesStackData = recentExpensesStack.getExpenses();
+        java.util.LinkedList<Expense> recentExpensesStackData = recentExpensesStack.getStack();
 
         ObservableList<Expense> recentExpensesList = FXCollections.observableArrayList(recentExpensesStackData);
-        FXCollections.reverse(recentExpensesList);
 
         RecentExpenseTable.setItems(recentExpensesList);
+        totalRecentExpenses = 0;
         for(Expense e : recentExpensesList){
             totalRecentExpenses+= e.getAmount();
         }
         updateTotalLabel();
     }
+
+    @FXML
+    protected void UndoRecentlyAddedExpense() {
+
+        if (recentExpensesStack.isEmpty()) {
+            showAlert("Warning", "No recent expenses to undo.");
+            return;
+        }
+
+        Expense lastExpense = recentExpensesStack.popItem();
+
+        newExpensesList.delete(lastExpense);
+        totalRecentExpenses -= lastExpense.getAmount();
+        if (totalRecentExpenses < 0) totalRecentExpenses = 0;
+
+        java.util.LinkedList<Expense> recentExpensesStackData = recentExpensesStack.getStack();
+        ObservableList<Expense> updatedRecentExpenses = FXCollections.observableArrayList(recentExpensesStackData);
+        RecentExpenseTable.setItems(updatedRecentExpenses);
+
+        updateTotalLabel();
+    }
+
 
     private void updateExpenseTable() {
         List<Expense> expensesList = expensesQueue.getAllExpenses();
@@ -216,6 +237,11 @@ public class ExpenseController {
     public void saveNewExpenses() {
         if (User == null || User.isEmpty()) {
             showAlert("Error", "User is not set. Cannot save expenses.");
+            return;
+        }
+
+        if(totalRecentExpenses == 0){
+            showAlert("Error", "No Recent Expenses to Save");
             return;
         }
 
@@ -252,7 +278,7 @@ public class ExpenseController {
 
     public void setUser(String user) {
         this.User = user;
-        Initialze();
+        Initialize();
     }
 
     public void clearExpenses() {
@@ -293,7 +319,6 @@ public class ExpenseController {
         Date sqlFromDate = Date.valueOf(fromDate);
         Date sqlToDate = Date.valueOf(toDate);
 
-        // Query to filter expenses by title and date range
         String query = "SELECT id, title, date, amount FROM expenses WHERE username = ? AND LOWER(title) LIKE ? AND date BETWEEN ? AND ?";
 
         List<Expense> filteredExpenses = new ArrayList<>();
@@ -321,7 +346,6 @@ public class ExpenseController {
             e.printStackTrace();
         }
 
-        // Update ExpenseTable with filtered results
         ObservableList<Expense> filteredList = FXCollections.observableArrayList(filteredExpenses);
         ExpenseTable.setItems(filteredList);
     }

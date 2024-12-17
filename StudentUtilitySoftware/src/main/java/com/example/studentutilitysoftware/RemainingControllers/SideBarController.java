@@ -127,40 +127,50 @@
 //}
 package com.example.studentutilitysoftware.RemainingControllers;
 
+import animatefx.animation.SlideInLeft;
+import animatefx.animation.SlideOutRight;
+import com.example.studentutilitysoftware.DashBoard.DashBoardController;
+import com.example.studentutilitysoftware.DataBase.DatabaseConnection;
 import com.example.studentutilitysoftware.ExpenseFeature.ExpenseController;
 import com.example.studentutilitysoftware.Home;
+import com.example.studentutilitysoftware.NotesFeature.NotesController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class SideBarController {
     private BorderPane layout;
     private String User;
-    private ExpenseController currentExpenseController; // Reference to current ExpenseController
+    private ExpenseController currentExpenseController;
 
     @FXML
+    private StackPane somePane;
+    @FXML
     private Button Logoutbtn;
-    @FXML
-    private Button Compressbtn;
-    @FXML
-    private Button Decompressbtn;
-    @FXML
-    private Button Notesbtn;
-    @FXML
-    private Button Expensesbtn;
-    @FXML
-    private Button DashBoardbtn;
     @FXML
     private AnchorPane SideBarPane;
     @FXML
     private Label UserNameLabel;
+
 
     public void setLayout(BorderPane layout) {
         this.layout = layout;
@@ -173,14 +183,14 @@ public class SideBarController {
     @FXML
     protected void GotoDashBoard() {
         if (canSwitchFrames()) {
-            loadView("/com/example/studentutilitysoftware/DashBoard.fxml", 600, "DashBoard");
+            loadView("/com/example/studentutilitysoftware/DashBoard.fxml", 883, "DashBoard");
         }
     }
 
     @FXML
     protected void GotoCompressor() {
         if (canSwitchFrames()) {
-            loadView("/com/example/studentutilitysoftware/FileCompressionUI.fxml", 600, "Compressor");
+            loadView("/com/example/studentutilitysoftware/FileCompressionUI.fxml", 881, "Compressor");
         }
     }
 
@@ -201,7 +211,7 @@ public class SideBarController {
     @FXML
     protected void GotoExpenses() {
         if (canSwitchFrames()) {
-            loadView("/com/example/studentutilitysoftware/Expenses.fxml", 756, "Expenses");
+            loadView("/com/example/studentutilitysoftware/Expenses.fxml", 755, "Expenses");
         }
     }
 
@@ -232,31 +242,98 @@ public class SideBarController {
         }
     }
 
+//    private void loadView(String fxmlPath, int viewWidth, String viewName) {
+//
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+//            layout.setRight(loader.load());
+//            layout.setMinWidth(viewWidth);
+//            layout.setMaxWidth(viewWidth);
+//
+//            if (viewName.equals("Expenses")) {
+//                ExpenseController expenseController = loader.getController();
+//                expenseController.setUser(this.User);
+//                currentExpenseController = expenseController;
+//            }else if(viewName.equals("DashBoard")){
+//                DashBoardController dashBoardController = loader.getController();
+//                dashBoardController.setUser(this.User);
+//            }else if(viewName.equals("Notes")){
+//                NotesController notesController = loader.getController();
+//                notesController.setUser(this.User);
+//            }
+//
+//            Stage stage = (Stage) layout.getScene().getWindow();
+//            if(viewName.equals("Expenses")){
+//                stage.setMinHeight(737);
+//                SideBarPane.setPrefHeight(737);
+//            }else if(viewName.equals("DashBoard")){
+//                stage.setMinHeight(788);
+//                SideBarPane.setPrefHeight(788);
+//            }
+//            stage.setMinWidth(252 + viewWidth);
+//            stage.setMaxWidth(252 + viewWidth);
+//            SlideInLeft S = new SlideInLeft(layout.getRight().getScene().getRoot());
+//            S.setSpeed(0.1);
+//            S.play();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            System.err.println("Error loading view: " + fxmlPath);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+
     private void loadView(String fxmlPath, int viewWidth, String viewName) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
-            layout.setRight(loader.load());
+            Node rightPane = loader.load();
+
+            // Set the right pane in the BorderPane but make it initially invisible
+            layout.setRight(rightPane);
             layout.setMinWidth(viewWidth);
             layout.setMaxWidth(viewWidth);
 
+            // Ensure the RightPane starts off-screen
+            rightPane.setTranslateX(layout.getWidth() + viewWidth);
+
+            // Set controller-specific logic
             if (viewName.equals("Expenses")) {
                 ExpenseController expenseController = loader.getController();
                 expenseController.setUser(this.User);
-                currentExpenseController = expenseController; // Store the controller reference
+                currentExpenseController = expenseController;
+            } else if (viewName.equals("DashBoard")) {
+                DashBoardController dashBoardController = loader.getController();
+                dashBoardController.setUser(this.User);
+            } else if (viewName.equals("Notes")) {
+                NotesController notesController = loader.getController();
+                notesController.setUser(this.User);
             }
 
+            // Adjust stage dimensions
             Stage stage = (Stage) layout.getScene().getWindow();
-            if(viewName.equals("Expenses")){
+            if (viewName.equals("Expenses")) {
                 stage.setMinHeight(737);
                 SideBarPane.setPrefHeight(737);
+            } else if (viewName.equals("DashBoard")) {
+                stage.setMinHeight(788);
+                SideBarPane.setPrefHeight(788);
             }
-            stage.setMinWidth(266 + viewWidth);
-            stage.setMaxWidth(266 + viewWidth);
+            stage.setMinWidth(252 + viewWidth);
+            stage.setMaxWidth(252 + viewWidth);
+
+            // Apply SlideInLeft animation, ensuring it moves from off-screen
+            SlideInLeft animation = new SlideInLeft(rightPane);
+            animation.setSpeed(0.5); // Adjust speed if necessary
+            animation.play();
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error loading view: " + fxmlPath);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
+
+
 
     private boolean canSwitchFrames() {
         if (currentExpenseController != null && currentExpenseController.hasUnsavedExpenses()) {
@@ -275,20 +352,82 @@ public class SideBarController {
             if (result.isPresent()) {
                 if (result.get() == saveButton) {
                     currentExpenseController.saveNewExpenses();
-                    return true; // Allow frame switch after saving
+                    return true;
                 } else if (result.get() == discardButton) {
                     currentExpenseController.clearExpenses();
-                    return true; // Allow frame switch after discarding
+                    return true;
                 } else {
-                    return false; // Cancel frame switch
+                    return false;
                 }
             }
         }
-        return true; // No unsaved expenses, allow frame switch
+        return true;
     }
 
     public void setUser(String username) {
         this.User = username;
         Intialize(username);
+        loadProfileImage(username);
     }
+
+    private void loadProfileImage(String username) {
+        try {
+            Connection connection = DatabaseConnection.getConnection();
+            String query = "SELECT profile_picture FROM users WHERE username = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, username);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                String imagePath = resultSet.getString("profile_picture");
+
+                if (imagePath != null && !imagePath.isEmpty()) {
+                    FileInputStream fileInputStream = new FileInputStream(imagePath);
+                    Image profileImage = new Image(fileInputStream);
+                    applyCircularImage(profileImage);
+                } else {
+                    System.out.println("No profile picture found for user: " + username);
+                }
+            }
+
+            resultSet.close();
+            preparedStatement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load profile picture: " + e.getMessage());
+        }
+    }
+
+    private void applyCircularImage(Image profileImage) {
+        ImageView imageView = new ImageView(profileImage);
+
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(150);
+        imageView.setLayoutX(50);
+        imageView.setLayoutY(40);
+
+        Circle circleMask = new Circle(125, 100, 76);
+        circleMask.setFill(Color.WHITE);
+
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().addAll(imageView);
+
+        stackPane.setClip(circleMask);
+
+        somePane.getChildren().add(stackPane);
+    }
+
+
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+
+        alert.showAndWait();
+    }
+
 }

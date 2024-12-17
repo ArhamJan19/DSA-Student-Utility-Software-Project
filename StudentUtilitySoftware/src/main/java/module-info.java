@@ -4,6 +4,9 @@ module com.example.studentutilitysoftware {
     requires org.apache.pdfbox;
     requires com.google.gson;
     requires java.sql;
+    requires java.desktop;
+    requires jBCrypt;
+    requires animatefx;
 
 
     opens com.example.studentutilitysoftware to javafx.fxml;
@@ -24,4 +27,14 @@ module com.example.studentutilitysoftware {
     exports com.example.studentutilitysoftware.NotesFeature;
     opens com.example.studentutilitysoftware.ExpenseFeature;
     exports com.example.studentutilitysoftware.ExpenseFeature;
+    opens com.example.studentutilitysoftware.Models.LinkedList;
+    exports com.example.studentutilitysoftware.Models.LinkedList;
+    exports com.example.studentutilitysoftware.Models.PriorityQueue;
+    opens com.example.studentutilitysoftware.Models.PriorityQueue;
+    exports com.example.studentutilitysoftware.Models.Trees;
+    opens com.example.studentutilitysoftware.Models.Trees;
+    exports com.example.studentutilitysoftware.Models.Stack;
+    opens com.example.studentutilitysoftware.Models.Stack;
+    exports com.example.studentutilitysoftware.DashBoard;
+    opens com.example.studentutilitysoftware.DashBoard to javafx.fxml;
 }

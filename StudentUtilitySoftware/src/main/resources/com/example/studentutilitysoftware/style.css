@@ -1,0 +1,47 @@
+/* Title label style */
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2a9d8f;
+    -fx-padding: 10px 0;
+    -fx-alignment: center;
+}
+
+/* Buttons style */
+.action-button {
+    -fx-background-color: #2a9d8f;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-border-color: #264653;
+}
+
+.action-button:hover {
+    -fx-background-color: #264653;
+    -fx-cursor: hand;
+}
+
+/* ListView style */
+.vertex-list {
+    -fx-border-color: #2a9d8f;
+    -fx-border-width: 2px;
+    -fx-background-color: #011a11;
+    -fx-padding: 10px;
+}
+
+/* Button box style */
+.button-box {
+    -fx-alignment: center;
+    -fx-spacing: 15px;
+    -fx-padding: 10px 0;
+}
+
+/* Main layout style */
+.main-layout {
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+    -fx-background-color: #f4f4f4;
+    -fx-alignment: center;
+}
